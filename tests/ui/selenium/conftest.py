@@ -19,6 +19,9 @@ def driver():
     options.add_argument("--window-size=1920,1080")
     browser = webdriver.Chrome(options=options)
     browser.implicitly_wait(0)
+    if not HEADED:
+        # --window-size is ignored by headless Chrome on Linux CI, so clicks miss.
+        browser.set_window_rect(width=1920, height=1080)
     yield browser
     if HEADED:
         time.sleep(1)
