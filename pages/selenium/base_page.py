@@ -20,10 +20,10 @@ class BasePage:
     def click(self, locator: Locator) -> None:
         element = self.wait.until(EC.element_to_be_clickable(locator))
         self.driver.execute_script(
-            "arguments[0].scrollIntoView({block: 'center'});",
+            "arguments[0].scrollIntoView({block: 'center'});"
+            "arguments[0].click();",
             element,
         )
-        element.click()
 
     @allure.step("Fill {locator}")
     def fill(self, locator: Locator, value: str) -> None:

@@ -20,8 +20,17 @@ def driver():
     browser = webdriver.Chrome(options=options)
     browser.implicitly_wait(0)
     if not HEADED:
-        # --window-size is ignored by headless Chrome on Linux CI, so clicks miss.
-        browser.set_window_rect(width=1920, height=1080)
+        # Headless Chrome on Linux ignores --window-size. Set the layout viewport
+        # directly, otherwise the cart link sits outside the clickable area.
+        browser.execute_cdp_cmd(
+            "Emulation.setDeviceMetricsOverride",
+            {
+                "width": 1920,
+                "height": 1080,
+                "deviceScaleFactor": 1,
+                "mobile": False,
+            },
+        )
     yield browser
     if HEADED:
         time.sleep(1)
