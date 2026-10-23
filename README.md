@@ -64,4 +64,4 @@ https://github.com/MadDayV/qa-autotests/actions/workflows/tests.yml
 
 ## Author
 
-David Madiyev, Almaty
+David Orlov, Almaty
