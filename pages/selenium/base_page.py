@@ -28,8 +28,24 @@ class BasePage:
     @allure.step("Fill {locator}")
     def fill(self, locator: Locator, value: str) -> None:
         element = self.wait_for(locator)
-        element.clear()
-        element.send_keys(value)
+        # SauceDemo stores login and checkout values in React state.
+        # Headless Chrome on Linux accepts send_keys into the DOM and still
+        # leaves that state empty, so Continue never opens the next step.
+        self.driver.execute_script(
+            """
+            const element = arguments[0];
+            const value = arguments[1];
+            const setter = Object.getOwnPropertyDescriptor(
+                window.HTMLInputElement.prototype,
+                "value"
+            ).set;
+            setter.call(element, value);
+            element.dispatchEvent(new Event("input", { bubbles: true }));
+            element.dispatchEvent(new Event("change", { bubbles: true }));
+            """,
+            element,
+            value,
+        )
 
     @allure.step("Wait for {locator}")
     def wait_for(self, locator: Locator) -> WebElement:
